@@ -6,6 +6,7 @@ txiaozhe个人网站的后台系统。前端页面：[Chihiro](https://github.co
 * echo
 * CockroachDB
 * MongoDB
+* glide
 
 ## 平台
 * CentOS：centos_7_03_64_40G_alibase_20170710.vhd
