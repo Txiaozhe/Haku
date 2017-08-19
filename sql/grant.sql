@@ -1,0 +1,5 @@
+CREATE USER yubaba WITH PASSWORD 'yubaba_db_txiaozhe';
+
+GRANT SELECT, INSERT, UPDATE ON TABLE admin TO yubaba;
+
+GRANT SELECT, INSERT, UPDATE ON TABLE blog TO zeniba;

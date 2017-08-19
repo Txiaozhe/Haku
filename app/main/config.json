@@ -1,0 +1,14 @@
+{
+  "server": {
+    "address": ":7002",
+    "debug": true
+  },
+  "middleware": {
+    "jwt": {
+      "tokenkey": "haku_Chihiro_kjdbksjqwsnbkwjhsvqwsbjqwshqwvshqkw"
+    },
+    "cors": {
+      "hosts": ["http://127.0.0.1:8000"]
+    }
+  }
+}
