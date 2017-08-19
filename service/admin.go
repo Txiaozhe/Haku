@@ -32,19 +32,27 @@ package service
 import (
 	"Haku/orm"
 	"github.com/jinzhu/gorm"
+	"Haku/security"
+	"errors"
 )
 
 type Admin struct {
-	Name   string `json:"name"  validate:"required"`
-	Pass   string `json:"pass"  validate:"required"`
-	Github string `json:"github" validate:"required"`
-	Email  string `json:"email" validate:"required"`
+	Id     int64
+	Name   *string `json:"name"  validate:"required"`
+	Pass   *string `json:"pass"  validate:"required"`
+	Github *string `json:"github" validate:"required"`
+	Email  *string `json:"email" validate:"required"`
 }
 
 type AdminLogin struct {
-	Name string `json:"name" validate:"required"`
-	Pass string `json:"pass" validate:"required"`
+	Name   *string `json:"name"  validate:"required"`
+	Pass   *string `json:"pass"  validate:"required"`
 }
+
+var (
+	errLoginFailed = errors.New("invalid username or password.")
+	errPassNotMatch = errors.New("Old password not match.")
+)
 
 func (Admin) TableName() string {
 	return "admin"
@@ -55,18 +63,39 @@ type adminServiceProvider struct{}
 var AdminService = &adminServiceProvider{}
 
 func (a *adminServiceProvider) Create(conn orm.Connection, admin Admin) error {
-	db := conn.(*gorm.DB)
+	saltedPass, err := security.SaltHashGenerate(admin.Pass)
+	if err != nil {
+		return err
+	}
 
-	return db.Create(admin).Error
-}
+	var p string = string(saltedPass)
 
-func (a *adminServiceProvider) Login(conn orm.Connection, name, pass string) error {
-	admin := &AdminLogin{
-		Name: name,
-		Pass: pass,
+	adm := &Admin{
+		Name: admin.Name,
+        Pass: &p,
+        Github: admin.Github,
+		Email: admin.Email,
 	}
 
 	db := conn.(*gorm.DB)
 
-	return db.Create(admin).Error
+	return db.Create(adm).Error
+}
+
+func (a *adminServiceProvider) Login(conn orm.Connection, name, pass *string) (int64, error) {
+	adm := &Admin{}
+
+	db := conn.(*gorm.DB)
+	err := db.Model(adm).Where("name = ?", name).First(adm).Error
+	if err != nil {
+		return -1, err
+	}
+
+	var p string = *(adm.Pass)
+
+	if security.SaltHashCompare([]byte(p), pass) {
+		return adm.Id, nil
+	}
+
+	return -1, errLoginFailed
 }

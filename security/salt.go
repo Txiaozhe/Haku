@@ -24,24 +24,26 @@
 
 /*
  * Revision History:
- *     Initial: 2017/08/15     Tang Xiaoji
+ *     Initial: 2017/08/19     Tang Xiaoji
  */
 
-package cockroach
+package security
 
-const (
-	dbUrl      = "postgresql://yubaba:yubaba_db_txiaozhe@106.15.227.154:26257/core?sslmode=disable"
-	dbPoolSize = 20
+import (
+	"golang.org/x/crypto/bcrypt"
 )
 
-var (
-	DbConnPool *Pool
-)
+func SaltHashGenerate(pass *string) ([]byte, error)  {
+    hex := []byte(*pass)
+	return bcrypt.GenerateFromPassword(hex, 10)
+}
 
-func InitCockroachPool() {
-	DbConnPool = NewPool(dbUrl, dbPoolSize)
+func SaltHashCompare(digest []byte, pass *string) bool {
+    hex := []byte(*pass)
 
-	if DbConnPool == nil {
-		panic("Cockroach DB connection error!")
+	if err := bcrypt.CompareHashAndPassword(digest, hex); err == nil {
+        return true
 	}
+
+	return false
 }

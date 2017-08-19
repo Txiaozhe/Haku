@@ -81,18 +81,18 @@ func Login(c echo.Context) error {
 		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
 	}
 
-	//conn, err := cockroach.DbConnPool.GetConnection()
-	//if err != nil {
-	//	return general.NewErrorWithMessage(errorcode.ErrDBConnection, err.Error())
-	//}
-	//defer cockroach.DbConnPool.ReleaseConnection(conn)
-	//
-	//err = service.AdminService.Login(conn, admin.Name, admin.Pass)
-	//if err != nil {
-	//	return general.NewErrorWithMessage(errorcode.ErrDBOperationFailed, err.Error())
-	//}
+	conn, err := cockroach.DbConnPool.GetConnection()
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrDBConnection, err.Error())
+	}
+	defer cockroach.DbConnPool.ReleaseConnection(conn)
 
-	key, token, err := jwt.NewToken(212123213213, admin.Name)
+	id, err := service.AdminService.Login(conn, admin.Name, admin.Pass)
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrDBOperationFailed, err.Error())
+	}
+
+	key, token, err := jwt.NewToken(id, *admin.Name)
 	if err != nil {
 		return general.NewErrorWithMessage(errorcode.ErrInternalServer, err.Error())
 	}
