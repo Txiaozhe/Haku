@@ -32,9 +32,18 @@ package route
 import (
 	"github.com/labstack/echo"
 	"Haku/handler"
+	"Haku/filter"
+	"Haku/middleware/jwt"
 )
 
-func InitRoute(server *echo.Echo)  {
+func InitRoute(server *echo.Echo, tokenKey string)  {
+	if server == nil {
+		panic("[InitRouter], server couldn't be nil")
+	}
+
+	jwt.InitJWTWithToken(tokenKey)
+
 	server.POST("/admin/create", handler.Create)
 	server.POST("/admin/login", handler.Login)
+	server.POST("/admin/test", handler.Test, filter.MustLogin)
 }

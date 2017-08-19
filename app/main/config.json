@@ -5,7 +5,7 @@
   },
   "middleware": {
     "jwt": {
-      "tokenkey": "haku_Chihiro_kjdbksjqwsnbkwjhsvqwsbjqwshqwvshqkw"
+      "tokenkey": "haku_chihiro_kjdbksjqwsnbkwjhsvqwsbjqwshqwvshqkw"
     },
     "cors": {
       "hosts": ["http://127.0.0.1:8000"]

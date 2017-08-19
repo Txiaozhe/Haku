@@ -36,6 +36,7 @@ import (
 	"Haku/service"
 	"github.com/labstack/echo"
 	"net/http"
+	"Haku/middleware/jwt"
 )
 
 func Create(c echo.Context) error {
@@ -80,16 +81,28 @@ func Login(c echo.Context) error {
 		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
 	}
 
-	conn, err := cockroach.DbConnPool.GetConnection()
-	if err != nil {
-		return general.NewErrorWithMessage(errorcode.ErrDBConnection, err.Error())
-	}
-	defer cockroach.DbConnPool.ReleaseConnection(conn)
+	//conn, err := cockroach.DbConnPool.GetConnection()
+	//if err != nil {
+	//	return general.NewErrorWithMessage(errorcode.ErrDBConnection, err.Error())
+	//}
+	//defer cockroach.DbConnPool.ReleaseConnection(conn)
+	//
+	//err = service.AdminService.Login(conn, admin.Name, admin.Pass)
+	//if err != nil {
+	//	return general.NewErrorWithMessage(errorcode.ErrDBOperationFailed, err.Error())
+	//}
 
-	err = service.AdminService.Login(conn, admin.Name, admin.Pass)
+	key, token, err := jwt.NewToken(212123213213, admin.Name)
 	if err != nil {
-		return general.NewErrorWithMessage(errorcode.ErrDBOperationFailed, err.Error())
+		return general.NewErrorWithMessage(errorcode.ErrInternalServer, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, nil)
+	return c.JSON(http.StatusOK, map[string]interface{}{key: token})
+}
+
+func Test(c echo.Context) error {
+
+	// id, name := jwt.GetAdmin(c)
+
+	return c.JSON(1, nil)
 }

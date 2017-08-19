@@ -36,4 +36,5 @@ const (
 	ErrPermissionDenied  = 3
 	ErrDBConnection      = 4
 	ErrDBOperationFailed = 5
+	ErrInternalServer    = 6
 )

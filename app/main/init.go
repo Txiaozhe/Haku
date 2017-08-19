@@ -36,6 +36,7 @@ import (
 	"Haku/route"
 	"Haku/general"
 	"Haku/orm/cockroach"
+	"Haku/middleware/jwt"
 )
 
 var (
@@ -52,7 +53,7 @@ func startEchoServer() {
 		AllowCredentials: true,
 	}))
 
-	// jwt
+	server.Use(jwt.CustomJWT(configuration.tokenKey))
 
 	server.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "${time_rfc3339_nano} ${uri} ${method} ${status} ${remote_ip} ${latency_human} ${bytes_in} ${bytes_out}\n",
@@ -67,7 +68,7 @@ func startEchoServer() {
 		log.SetLevel(log.INFO)
 	}
 
-	route.InitRoute(server)
+	route.InitRoute(server, configuration.tokenKey)
 
 	server.Start(configuration.address)
 }
