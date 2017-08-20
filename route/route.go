@@ -43,7 +43,7 @@ func InitRoute(server *echo.Echo, tokenKey string) {
 
 	jwt.InitJWTWithToken(tokenKey)
 
-	server.POST("/api/v1/checkloginstatus", handler.CheckLoginStatus, filter.MustLogin)
+	server.GET("/api/v1/checkloginstatus", handler.CheckLoginStatus, filter.MustLogin)
 
 	server.POST("/api/v1/admin/create", handler.Create)
 	server.POST("/api/v1/admin/login", handler.Login)

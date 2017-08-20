@@ -35,5 +35,6 @@ import (
 )
 
 func CheckLoginStatus(c echo.Context) error {
+	// id, name := jwt.GetAdmin(c)
 	return c.JSON(http.StatusOK, nil)
 }

@@ -94,5 +94,4 @@ func init()  {
 	urlMap = make(map[string]struct{})
 
 	urlMap["/api/v1/admin/login"] = struct{}{}
-	urlMap["/api/v1/checkloginstatus"] = struct{}{}
 }
