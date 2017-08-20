@@ -24,28 +24,16 @@
 
 /*
  * Revision History:
- *     Initial: 2017/08/15     Tang Xiaoji
+ *     Initial: 2017/08/20     Tang Xiaoji
  */
 
-package route
+package handler
 
 import (
 	"github.com/labstack/echo"
-	"Haku/handler"
-	"Haku/filter"
-	"Haku/middleware/jwt"
+	"net/http"
 )
 
-func InitRoute(server *echo.Echo, tokenKey string) {
-	if server == nil {
-		panic("[InitRouter], server couldn't be nil")
-	}
-
-	jwt.InitJWTWithToken(tokenKey)
-
-	server.POST("/api/v1/checkloginstatus", handler.CheckLoginStatus, filter.MustLogin)
-
-	server.POST("/api/v1/admin/create", handler.Create)
-	server.POST("/api/v1/admin/login", handler.Login)
-	server.POST("/api/v1/admin/test", handler.Test, filter.MustLogin)
+func CheckLoginStatus(c echo.Context) error {
+	return c.JSON(http.StatusOK, nil)
 }
