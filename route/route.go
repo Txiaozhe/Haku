@@ -34,6 +34,8 @@ import (
 	"Haku/handler"
 	"Haku/filter"
 	"Haku/middleware/jwt"
+	"Haku/handler/admin"
+	"Haku/handler/blog"
 )
 
 func InitRoute(server *echo.Echo, tokenKey string) {
@@ -45,7 +47,10 @@ func InitRoute(server *echo.Echo, tokenKey string) {
 
 	server.GET("/api/v1/checkloginstatus", handler.CheckLoginStatus, filter.MustLogin)
 
-	server.POST("/api/v1/admin/create", handler.Create)
-	server.POST("/api/v1/admin/login", handler.Login)
-	server.POST("/api/v1/admin/test", handler.Test, filter.MustLogin)
+	// admin
+	server.POST("/api/v1/admin/create", admin.Create)
+	server.POST("/api/v1/admin/login", admin.Login)
+
+	// blog
+	server.POST("/api/v1/blog/create", blog.Create, filter.MustLogin)
 }

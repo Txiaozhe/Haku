@@ -30,8 +30,13 @@
 package cockroach
 
 const (
-	dbUrl      = "postgresql://yubaba:yubaba_db_txiaozhe@106.15.227.154:26257/core?sslmode=disable"
+	dbUrl      = "postgresql://yubaba:yubaba_db_txiaozhe@106.15.227.154:26257?sslmode=disable"
 	dbPoolSize = 20
+)
+
+var (
+	Core = "core"
+	Content = "content"
 )
 
 var (
