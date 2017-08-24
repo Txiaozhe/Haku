@@ -52,12 +52,13 @@ var (
 	urlMap map[string]struct{}
 )
 
+// 控制是否必须 token
 func CustomSkipper(c echo.Context) bool {
 	if _, ok := urlMap[c.Request().RequestURI]; ok {
-		return true
+		return false
 	}
 
-	return false
+	return true
 }
 
 func CustomJWT(tokenKey string) echo.MiddlewareFunc  {
