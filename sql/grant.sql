@@ -1,5 +1,5 @@
-CREATE USER yubaba WITH PASSWORD 'yubaba_db_txiaozhe';
+CREATE USER txiaozhe WITH PASSWORD 'haku_db_txiaozhe';
 
-GRANT SELECT, INSERT, UPDATE ON TABLE admin TO yubaba;
+GRANT SELECT, INSERT, UPDATE ON TABLE admin TO txiaozhe;
 
-GRANT SELECT, INSERT, UPDATE ON TABLE blog TO yubaba;
+GRANT SELECT, INSERT, UPDATE ON TABLE blog TO txiaozhe;

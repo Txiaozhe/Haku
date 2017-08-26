@@ -45,15 +45,17 @@ func InitRoute(server *echo.Echo, tokenKey string) {
 
 	jwt.InitJWTWithToken(tokenKey)
 
+	server.GET("/api/v1/checkloginstatus", handler.CheckLoginStatus, filter.MustLogin)
+
 	// admin
 	server.POST("/api/v1/admin/create", admin.Create)
 	server.POST("/api/v1/admin/login", admin.Login)
 
-	// blog
+	// blog github
 	server.GET("/api/v1/blog/github/get", blog.GetListFromGitHub)
 	server.GET("/api/v1/blog/github/label/get", blog.GetLabelFromGitHub)
 	server.POST("/api/v1/blog/github/detail", blog.GetDetailFromGitHub)
 
+	// blog aliyun
 	server.POST("/api/v1/blog/create", blog.Create, filter.MustLogin)
-	server.GET("/api/v1/checkloginstatus", handler.CheckLoginStatus, filter.MustLogin)
 }

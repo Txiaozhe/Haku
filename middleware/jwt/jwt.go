@@ -94,5 +94,5 @@ func GetAdmin(c echo.Context) (int64, string)  {
 func init()  {
 	urlMap = make(map[string]struct{})
 
-	urlMap["/api/v1/admin/login"] = struct{}{}
+	urlMap["/api/v1/blog/create"] = struct{}{}
 }
