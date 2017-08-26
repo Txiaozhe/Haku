@@ -43,6 +43,7 @@ type BlogReq struct {
 	Title    *string `json:"title" validate:"required"`
 	Category int8    `json:"category" validate:"required"`
 	Abstract *string `json:"abstract" validate:"required"`
+	Tag      *string `json:"tag" validate:"required"`
 	Content  *string `json:"content" validate:"required"`
 }
 
@@ -52,6 +53,7 @@ type Blog struct {
 	Title     *string    `json:"title"`
 	Category  int8       `json:"category"`
 	Abstract  *string    `json:"abstract"`
+	Tag       *string    `json:"tag"`
 	Contentid int32      `json:"contentid"`
 	Created   *time.Time `json:"created"`
 }
@@ -80,6 +82,7 @@ func (b *blogServiceProvider) Create(conn orm.Connection, bo BlogReq) (err error
 		Title:     bo.Title,
 		Category:  bo.Category,
 		Abstract:  bo.Abstract,
+		Tag:       bo.Tag,
 		Contentid: contid,
 		Created:   &now,
 	}
