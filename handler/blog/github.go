@@ -35,7 +35,12 @@ import (
 	"Haku/service/blog"
 	"Haku/general"
 	"Haku/general/errorcode"
+	"fmt"
 )
+
+type detailRequest struct {
+	Number   string   `json:"number" validate:"required"`
+}
 
 func GetLabelFromGitHub(c echo.Context) error {
 	labels, err := blog.BlogService.GetLabelFromGitHub()
@@ -46,11 +51,35 @@ func GetLabelFromGitHub(c echo.Context) error {
 	return c.JSON(http.StatusOK, labels)
 }
 
-func GetFromGitHub(c echo.Context) error {
-	blogs, err := blog.BlogService.GetFromGitHub()
+func GetListFromGitHub(c echo.Context) error {
+	blogs, err := blog.BlogService.GetListFromGitHub()
 	if err != nil {
 		return general.NewErrorWithMessage(errorcode.ErrInternalServer, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, blogs)
+}
+
+func GetDetailFromGitHub(c echo.Context) error {
+	var (
+		detailReq    detailRequest
+		err          error
+	)
+
+	if err = c.Bind(&detailReq); err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
+	}
+
+	if err = c.Validate(detailReq); err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
+	}
+
+	blog, err := blog.BlogService.GetDetailFromGitHub(detailReq.Number)
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInternalServer, err.Error())
+	}
+
+	fmt.Println(detailReq.Number)
+
+	return c.JSON(http.StatusOK, blog)
 }

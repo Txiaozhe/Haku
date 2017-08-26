@@ -33,6 +33,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"fmt"
 )
 
 type Label struct {
@@ -43,9 +44,18 @@ type Label struct {
 
 type GitHubBlog struct {
 	Id         int32   `json:"id"`
+	Number     int32   `json:"number"`
 	Title      string  `json:"title"`
-	Body       string  `json:"body"`
 	Labels     []Label `json:"labels"`
+	Updated_at string  `json:"updated_at"`
+}
+
+type GitHubBlogDetail struct {
+	Id         int32   `json:"id"`
+	Number     int32   `json:"number"`
+	Title      string  `json:"title"`
+	Labels     []Label `json:"labels"`
+	Body       string  `json:"body"`
 	Updated_at string  `json:"updated_at"`
 }
 
@@ -73,7 +83,7 @@ func (b *blogServiceProvider) GetLabelFromGitHub() ([]Label, error) {
 	return labels, nil
 }
 
-func (b *blogServiceProvider) GetFromGitHub() ([]GitHubBlog, error) {
+func (b *blogServiceProvider) GetListFromGitHub() ([]GitHubBlog, error) {
 	var (
 		err   error
 		blogs []GitHubBlog
@@ -94,4 +104,27 @@ func (b *blogServiceProvider) GetFromGitHub() ([]GitHubBlog, error) {
 
 	json.Unmarshal([]byte(body), &blogs)
 	return blogs, nil
+}
+
+func (b *blogServiceProvider) GetDetailFromGitHub(number string) (GitHubBlogDetail, error) {
+	var (
+		err   error
+		blog  GitHubBlogDetail
+	)
+	url := "https://api.github.com/repos/Txiaozhe/docs/issues/" + number
+	fmt.Println(url)
+
+	resp, err := http.Get(url)
+	//if err != nil {
+	//	return nil, err
+	//}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	//if err != nil {
+	//	return nil, err
+	//}
+
+	json.Unmarshal([]byte(body), &blog)
+	return blog, err
 }

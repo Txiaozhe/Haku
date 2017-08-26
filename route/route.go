@@ -50,8 +50,9 @@ func InitRoute(server *echo.Echo, tokenKey string) {
 	server.POST("/api/v1/admin/login", admin.Login)
 
 	// blog
-	server.GET("/api/v1/blog/github/get", blog.GetFromGitHub)
+	server.GET("/api/v1/blog/github/get", blog.GetListFromGitHub)
 	server.GET("/api/v1/blog/github/label/get", blog.GetLabelFromGitHub)
+	server.POST("/api/v1/blog/github/detail", blog.GetDetailFromGitHub)
 
 	server.POST("/api/v1/blog/create", blog.Create, filter.MustLogin)
 	server.GET("/api/v1/checkloginstatus", handler.CheckLoginStatus, filter.MustLogin)
