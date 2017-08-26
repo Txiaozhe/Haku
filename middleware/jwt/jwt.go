@@ -95,4 +95,5 @@ func init()  {
 	urlMap = make(map[string]struct{})
 
 	urlMap["/api/v1/blog/create"] = struct{}{}
+	urlMap["/api/v1/blog/list"] = struct{}{}
 }

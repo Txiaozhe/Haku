@@ -31,26 +31,42 @@ package blog
 
 import (
 	"Haku/orm"
-	"github.com/jinzhu/gorm"
 	"Haku/orm/cockroach"
+	"github.com/jinzhu/gorm"
+	"time"
 )
 
 type Blog struct {
+	Id       int64      `json:"id"`
 	Title    *string    `json:"title" validate:"required"`
-	Category *string    `json:"category" validate:"required"`
+	Category *int8      `json:"category" validate:"required"`
 	Abstract *string    `json:"abstract" validate:"required"`
 	Content  *string    `json:"content" validate:"required"`
+	Created  *time.Time `json:"created"`
 }
 
 func (Blog) TableName() string {
 	return "blog"
 }
 
-type blogServiceProvider struct {}
+type blogServiceProvider struct{}
 
 var BlogService = &blogServiceProvider{}
 
 func (b *blogServiceProvider) Create(conn orm.Connection, bo Blog) error {
 	db := conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Content)
 	return db.Create(bo).Error
+}
+
+func (b *blogServiceProvider) GetList(conn orm.Connection, category int8) ([]Blog, error) {
+	var (
+		blog Blog
+		list []Blog
+	)
+
+	db := conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Content)
+
+	err := db.Model(&blog).Where("category=?", category).Find(&list).Error
+
+	return list, err
 }
