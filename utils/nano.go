@@ -24,36 +24,16 @@
 
 /*
  * Revision History:
- *     Initial: 2017/08/15     Tang Xiaoji
+ *     Initial: 2017/08/26     Tang Xiaoji
  */
 
-package main
+package utils
 
-import "github.com/spf13/viper"
+import (
+	"time"
+	"math/rand"
+)
 
-type workServerConfig struct {
-	address       string
-	isDebug       bool
-	corsHosts     []string
-	tokenKey      string
-	mongoURL      string
-}
-
-var configuration *workServerConfig
-
-func readConfiguration()  {
-	viper.AddConfigPath("./")
-	viper.SetConfigName("config")
-
-	if err := viper.ReadInConfig(); err != nil {
-		panic(err)
-	}
-
-	configuration = &workServerConfig{
-		address: viper.GetString("server.address"),
-		isDebug: viper.GetBool("server.debug"),
-		corsHosts: viper.GetStringSlice("middleware.cors.hosts"),
-		tokenKey: viper.GetString("middleware.jwt.tokenkey"),
-		mongoURL: viper.GetString("mongo.url"),
-	}
+func GetMillNanoId() int32 {
+	return rand.New(rand.NewSource(time.Now().UnixNano())).Int31()
 }

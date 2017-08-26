@@ -30,19 +30,36 @@
 package blog
 
 import (
+	"Haku/mongo"
 	"Haku/orm"
 	"Haku/orm/cockroach"
+	"Haku/utils"
 	"github.com/jinzhu/gorm"
 	"time"
 )
 
+// 接收
+type BlogReq struct {
+	Title    *string `json:"title" validate:"required"`
+	Category int8    `json:"category" validate:"required"`
+	Abstract *string `json:"abstract" validate:"required"`
+	Content  *string `json:"content" validate:"required"`
+}
+
+// roach 创建
 type Blog struct {
-	Id       int64      `json:"id"`
-	Title    *string    `json:"title" validate:"required"`
-	Category *int8      `json:"category" validate:"required"`
-	Abstract *string    `json:"abstract" validate:"required"`
-	Content  *string    `json:"content" validate:"required"`
-	Created  *time.Time `json:"created"`
+	Id        int64      `json:"id"`
+	Title     *string    `json:"title"`
+	Category  int8       `json:"category"`
+	Abstract  *string    `json:"abstract"`
+	Contentid int32      `json:"contentid"`
+	Created   *time.Time `json:"created"`
+}
+
+// mongo 创建
+type BlogContent struct {
+	ContentId int32   `bson:"contentid"`
+	Content   *string `bson:"content"`
 }
 
 func (Blog) TableName() string {
@@ -53,14 +70,51 @@ type blogServiceProvider struct{}
 
 var BlogService = &blogServiceProvider{}
 
-func (b *blogServiceProvider) Create(conn orm.Connection, bo Blog) error {
-	db := conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Content)
-	return db.Create(bo).Error
+func (b *blogServiceProvider) Create(conn orm.Connection, bo BlogReq) (err error) {
+	// 生成 contentid
+	contid := utils.GetMillNanoId()
+
+	// cockroach 存储列表项
+	now := time.Now()
+	blog := &Blog{
+		Title:     bo.Title,
+		Category:  bo.Category,
+		Abstract:  bo.Abstract,
+		Contentid: contid,
+		Created:   &now,
+	}
+
+	tx := conn.(*gorm.DB).Begin().Exec("SET DATABASE = " + cockroach.Content)
+
+	defer func() {
+		if err != nil {
+			err = tx.Rollback().Error
+		} else {
+			err = tx.Commit().Error
+		}
+	}()
+
+	if err = tx.Create(blog).Error; err != nil {
+		return
+	}
+
+	// mongo 存储内容
+	collect := mongo.Db.C("blog")
+	con := &BlogContent{
+		ContentId: contid,
+		Content:   bo.Content,
+	}
+
+	if err = mongo.Insert(collect, con); err != nil {
+		return
+	}
+
+	return
 }
 
 func (b *blogServiceProvider) GetList(conn orm.Connection, category int8) ([]Blog, error) {
 	var (
-		blog Blog
+		blog  Blog
 		list []Blog
 	)
 

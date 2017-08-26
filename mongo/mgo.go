@@ -29,7 +29,6 @@
 
 package mongo
 
-
 import (
 	"gopkg.in/mgo.v2"
 	"time"
@@ -38,13 +37,14 @@ import (
 
 var (
 	MDSession *mgo.Session
+	Db *mgo.Database
 )
 
 const (
 	CORE = "core"
 )
 
-func InitCore(url string)  {
+func InitHaku(url string)  {
 	var err error
 	MDSession, err = mgo.DialWithTimeout(url + "/" + CORE, time.Second)
 
@@ -54,4 +54,6 @@ func InitCore(url string)  {
 
 	log.Logger.Debug("The MongoDB of %s connected!", CORE)
 	MDSession.SetMode(mgo.Monotonic, true)
+
+	Db = MDSession.DB("core")
 }

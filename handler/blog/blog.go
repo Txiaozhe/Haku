@@ -41,7 +41,7 @@ import (
 func Create(c echo.Context) error {
 	var (
 		err   error
-		b     blog.Blog
+		b     blog.BlogReq
 	)
 
 	if err = c.Bind(&b); err != nil {

@@ -6,6 +6,6 @@ CREATE TABLE IF NOT EXISTS blog (
   title     STRING(32)     NOT NULL,
   category  INT8           NOT NULL,
   abstract  STRING(64)     NOT NULL,
-  content   STRING(5000)   NOT NULL,
+  contentid INT64          NOT NULL,
   created   TIMESTAMP      DEFAULT now()
 );
