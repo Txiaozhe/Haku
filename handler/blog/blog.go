@@ -98,3 +98,29 @@ func GetList(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, blogs)
 }
+
+func GetBlogDetail(c echo.Context) error {
+	type id struct {
+		Id     int32   `json:"id"`
+	}
+
+	var (
+		err  error
+		i    id
+	)
+
+	if err = c.Bind(&i); err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
+	}
+
+	if err = c.Validate(i); err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
+	}
+
+	cont, err := blog.BlogService.GetBlogDetail(i.Id)
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrDBOperationFailed, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, cont)
+}

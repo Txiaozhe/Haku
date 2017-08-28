@@ -48,7 +48,7 @@ func GetById(collection *mgo.Collection, id string, i interface{})  {
 
 // 根据条件查找单条记录
 func GetUniqueOne(collection *mgo.Collection, q interface{}, doc interface{}) error {
-	return collection.Find(q).All(doc)
+	return collection.Find(q).One(doc)
 }
 
 // 根据条件模糊查询多条记录

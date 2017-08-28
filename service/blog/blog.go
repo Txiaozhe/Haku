@@ -36,6 +36,7 @@ import (
 	"Haku/utils"
 	"github.com/jinzhu/gorm"
 	"time"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // 接收
@@ -126,4 +127,10 @@ func (b *blogServiceProvider) GetList(conn orm.Connection, category int8) ([]Blo
 	err := db.Model(&blog).Where("category=?", category).Find(&list).Error
 
 	return list, err
+}
+
+func (b *blogServiceProvider) GetBlogDetail(id int32) (cont BlogContent, err error) {
+	collect := mongo.Db.C("blog")
+	err = mongo.GetUniqueOne(collect, bson.M{"contentid": id}, &cont)
+	return
 }

@@ -59,4 +59,5 @@ func InitRoute(server *echo.Echo, tokenKey string) {
 	// blog aliyun
 	server.POST("/api/v1/blog/create", blog.Create, filter.MustLogin)
 	server.POST("/api/v1/blog/list", blog.GetList, filter.MustLogin)
+	server.POST("/api/v1/blog/detail", blog.GetBlogDetail, filter.MustLogin)
 }

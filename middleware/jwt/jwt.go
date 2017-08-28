@@ -96,4 +96,5 @@ func init()  {
 
 	urlMap["/api/v1/blog/create"] = struct{}{}
 	urlMap["/api/v1/blog/list"] = struct{}{}
+	urlMap["/api/v1/blog/detail"] = struct{}{}
 }
