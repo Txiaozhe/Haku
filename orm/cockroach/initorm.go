@@ -30,7 +30,7 @@
 package cockroach
 
 const (
-	dbUrl      = "postgresql://txiaozhe:haku_db_txiaozhe@106.15.227.154:26257?sslmode=disable"
+	dbUrl      = "postgresql://txiaozhe:haku_db_txiaozhe@127.0.0.1:26257?sslmode=disable"
 	dbPoolSize = 20
 )
 
