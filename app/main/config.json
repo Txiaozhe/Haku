@@ -8,7 +8,7 @@
       "tokenkey": "haku_chihiro_kjdbksjqwsnbkwjhsvqwsbjqwshqwvshqkw"
     },
     "cors": {
-      "hosts": ["http://txiaozhe.top:8080"]
+      "hosts": ["http://txiaozhe.top", "http://txiaozhe.top:8080", "http://127.0.0.1:8000"]
     }
   },
   "mongo": {
