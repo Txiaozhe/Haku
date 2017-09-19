@@ -67,6 +67,11 @@ type BlogContent struct {
 	Content   *string `bson:"content"`
 }
 
+// Star
+type Star struct {
+	Star     int8    `json:"star"`
+}
+
 func (Blog) TableName() string {
 	return "blog"
 }
@@ -148,4 +153,20 @@ func (b *blogServiceProvider) GetBlogDetail(id int32) (cont BlogContent, err err
 	collect := mongo.Db.C("blog")
 	err = mongo.GetUniqueOne(collect, bson.M{"contentid": id}, &cont)
 	return
+}
+
+func (b *blogServiceProvider) SetStar(conn orm.Connection, id int64) (Star, error) {
+	var (
+		err  error
+		blog Blog
+		s    Star
+	)
+
+	db := conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Content)
+
+	err = db.Model(&blog).Find(&blog).Where("id=?", id).UpdateColumn("star", gorm.Expr("star + ?", 1)).Limit(1).Error
+
+	s = Star{blog.Star + 1}
+
+	return s, err
 }

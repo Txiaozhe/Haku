@@ -63,6 +63,9 @@ func InitRoute(server *echo.Echo, tokenKey string) {
 	server.GET("/api/blog/list/all", blog.GetAllBlog)
 	server.POST("/api/blog/detail", blog.GetBlogDetail)
 
+	// star
+	server.POST("/api/blog/star", blog.SetStar)
+
 	// badge
 	server.POST("/api/badge/create", badge.Create)
 	server.POST("/api/badge/get", badge.GetBadgeByBlogId)
