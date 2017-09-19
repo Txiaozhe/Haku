@@ -36,15 +36,20 @@ import (
 	"Haku/orm/cockroach"
 )
 
-type BadgeReq struct {
-	Blogid     int64      `json:"blogid" validate:"required"`
+type Badge struct {
+	Id         int64       `json:"id"`
+	Blogid     int64       `json:"blogid" validate:"required"`
 	Name       *string     `json:"name" validate:"required"`
 	Avatar     *string     `json:"avatar" validate:"required"`
 	Content    *string     `json:"content" validate:"required"`
 	Created    *time.Time  `json:"created"`
 }
 
-func (BadgeReq) TableName() string {
+type BadgeById struct {
+	Blogid   int64   `json:"blogid" validate:"required"`
+}
+
+func (Badge) TableName() string {
 	return "badge"
 }
 
@@ -52,9 +57,9 @@ type badgeServiceProvider struct {}
 
 var BadgeService = &badgeServiceProvider{}
 
-func (c *badgeServiceProvider) Create(conn orm.Connection, ba BadgeReq) error {
+func (c *badgeServiceProvider) Create(conn orm.Connection, ba Badge) error {
 	now := time.Now()
-	badge := &BadgeReq{
+	badge := &Badge{
 		Blogid: ba.Blogid,
 		Name: ba.Name,
 		Avatar: ba.Avatar,
@@ -69,4 +74,16 @@ func (c *badgeServiceProvider) Create(conn orm.Connection, ba BadgeReq) error {
 	}
 
 	return nil
+}
+
+func (c *badgeServiceProvider) GetBadgeByBlogId(conn orm.Connection, id int64) ([]Badge, error) {
+	var (
+		badge    Badge
+		list     []Badge
+	)
+
+	db := conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Grade)
+	err := db.Model(&badge).Where("blogid=?", id).Find(&list).Error
+
+    return list, err
 }

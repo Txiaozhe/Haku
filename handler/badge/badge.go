@@ -30,18 +30,18 @@
 package badge
 
 import (
-	"github.com/labstack/echo"
-	"Haku/service/badge"
-	"Haku/general/errorcode"
 	"Haku/general"
+	"Haku/general/errorcode"
 	"Haku/orm/cockroach"
+	"Haku/service/badge"
+	"github.com/labstack/echo"
 	"net/http"
 )
 
 func Create(c echo.Context) error {
 	var (
-		err       error
-		ba        badge.BadgeReq
+		err error
+		ba  badge.Badge
 	)
 
 	if err = c.Bind(&ba); err != nil {
@@ -66,3 +66,31 @@ func Create(c echo.Context) error {
 	return c.JSON(http.StatusOK, nil)
 }
 
+func GetBadgeByBlogId(c echo.Context) error {
+	var (
+		err       error
+		ba        badge.BadgeById
+		badgelist []badge.Badge
+	)
+
+	if err = c.Bind(&ba); err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
+	}
+
+	if err = c.Validate(ba); err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
+	}
+
+	conn, err := cockroach.DbConnPool.GetConnection()
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrDBConnection, err.Error())
+	}
+	defer cockroach.DbConnPool.ReleaseConnection(conn)
+
+	badgelist, err = badge.BadgeService.GetBadgeByBlogId(conn, ba.Blogid)
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrDBOperationFailed, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, badgelist)
+}
