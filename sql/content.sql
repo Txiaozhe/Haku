@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS blog (
   abstract  STRING(64)     NOT NULL,
   tag       STRING(64)     NOT NULL,
   contentid INT64          NOT NULL,
+  star      INT8           DEFAULT 0,
   created   TIMESTAMP      DEFAULT now()
 );
