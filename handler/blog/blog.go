@@ -36,6 +36,7 @@ import (
 	"Haku/general"
 	"Haku/general/errorcode"
 	"Haku/orm/cockroach"
+	"strconv"
 )
 
 func Create(c echo.Context) error {
@@ -147,7 +148,7 @@ func GetBlogDetail(c echo.Context) error {
 
 func SetStar(c echo.Context) error {
 	type id struct {
-		Id     int64   `json:"id" validate:"required"`
+		Id     string   `json:"id" validate:"required"`
 	}
 
 	var (
@@ -170,7 +171,50 @@ func SetStar(c echo.Context) error {
 	}
 	defer cockroach.DbConnPool.ReleaseConnection(conn)
 
-	star, err = blog.BlogService.SetStar(conn, i.Id)
+	i64, err := strconv.ParseInt(i.Id, 10, 64)
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInternalServer, err.Error())
+	}
+
+	star, err = blog.BlogService.SetStar(conn, i64)
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInternalServer, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, star)
+}
+
+func GetStar(c echo.Context) error {
+	type id struct {
+		Id     string   `json:"id" validate:"required"`
+	}
+
+	var (
+		err  error
+		i    id
+		star blog.Star
+	)
+
+	if err = c.Bind(&i); err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
+	}
+
+	if err = c.Validate(i); err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
+	}
+
+	conn, err := cockroach.DbConnPool.GetConnection()
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrDBConnection, err.Error())
+	}
+	defer cockroach.DbConnPool.ReleaseConnection(conn)
+
+	i64, err := strconv.ParseInt(i.Id, 10, 64)
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInternalServer, err.Error())
+	}
+
+	star, err = blog.BlogService.GetStar(conn, i64)
 	if err != nil {
 		return general.NewErrorWithMessage(errorcode.ErrInternalServer, err.Error())
 	}

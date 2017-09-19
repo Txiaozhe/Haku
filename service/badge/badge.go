@@ -37,8 +37,8 @@ import (
 )
 
 type Badge struct {
-	Id         int64       `json:"id"`
-	Blogid     int64       `json:"blogid" validate:"required"`
+	Id         int64       `json:"id,string"`
+	Blogid     int64       `json:"blogid,string" validate:"required"`
 	Name       *string     `json:"name" validate:"required"`
 	Avatar     *string     `json:"avatar" validate:"required"`
 	Content    *string     `json:"content" validate:"required"`
@@ -46,7 +46,7 @@ type Badge struct {
 }
 
 type BadgeById struct {
-	Blogid   int64   `json:"blogid" validate:"required"`
+	Blogid   string   `json:"blogid" validate:"required"`
 }
 
 func (Badge) TableName() string {

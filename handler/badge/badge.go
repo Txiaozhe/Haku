@@ -36,6 +36,7 @@ import (
 	"Haku/service/badge"
 	"github.com/labstack/echo"
 	"net/http"
+	"strconv"
 )
 
 func Create(c echo.Context) error {
@@ -87,7 +88,12 @@ func GetBadgeByBlogId(c echo.Context) error {
 	}
 	defer cockroach.DbConnPool.ReleaseConnection(conn)
 
-	badgelist, err = badge.BadgeService.GetBadgeByBlogId(conn, ba.Blogid)
+	i64, err := strconv.ParseInt(ba.Blogid, 10, 64)
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInternalServer, err.Error())
+	}
+
+	badgelist, err = badge.BadgeService.GetBadgeByBlogId(conn, i64)
 	if err != nil {
 		return general.NewErrorWithMessage(errorcode.ErrDBOperationFailed, err.Error())
 	}
