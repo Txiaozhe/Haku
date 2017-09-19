@@ -99,6 +99,26 @@ func GetList(c echo.Context) error {
 	return c.JSON(http.StatusOK, blogs)
 }
 
+func GetAllBlog(c echo.Context) error {
+	var (
+		err error
+		blogs []blog.Blog
+	)
+
+	conn, err := cockroach.DbConnPool.GetConnection()
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrDBConnection, err.Error())
+	}
+	defer cockroach.DbConnPool.ReleaseConnection(conn)
+
+	blogs, err = blog.BlogService.GetAllBlog(conn)
+	if err != nil {
+		general.NewErrorWithMessage(errorcode.ErrInternalServer, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, blogs)
+}
+
 func GetBlogDetail(c echo.Context) error {
 	type id struct {
 		Id     int32   `json:"id"`

@@ -129,6 +129,19 @@ func (b *blogServiceProvider) GetList(conn orm.Connection, category int8) ([]Blo
 	return list, err
 }
 
+func (b *blogServiceProvider) GetAllBlog(conn orm.Connection) ([]Blog, error) {
+	var (
+		blog Blog
+		list []Blog
+	)
+
+	db := conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Content)
+
+	err := db.Model(&blog).Find(&list).Error
+
+	return list, err
+}
+
 func (b *blogServiceProvider) GetBlogDetail(id int32) (cont BlogContent, err error) {
 	collect := mongo.Db.C("blog")
 	err = mongo.GetUniqueOne(collect, bson.M{"contentid": id}, &cont)

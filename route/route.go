@@ -36,6 +36,7 @@ import (
 	"Haku/middleware/jwt"
 	"Haku/handler/admin"
 	"Haku/handler/blog"
+	"Haku/handler/badge"
 )
 
 func InitRoute(server *echo.Echo, tokenKey string) {
@@ -45,19 +46,23 @@ func InitRoute(server *echo.Echo, tokenKey string) {
 
 	jwt.InitJWTWithToken(tokenKey)
 
-	server.GET("/api/v1/checkloginstatus", handler.CheckLoginStatus, filter.MustLogin)
+	server.GET("/api/checkloginstatus", handler.CheckLoginStatus, filter.MustLogin)
 
 	// admin
-	server.POST("/api/v1/admin/create", admin.Create)
-	server.POST("/api/v1/admin/login", admin.Login)
+	server.POST("/api/admin/create", admin.Create)
+	server.POST("/api/admin/login", admin.Login)
 
 	// blog github
-	server.GET("/api/v1/blog/github/get", blog.GetListFromGitHub)
-	server.GET("/api/v1/blog/github/label/get", blog.GetLabelFromGitHub)
-	server.POST("/api/v1/blog/github/detail", blog.GetDetailFromGitHub)
+	server.GET("/api/blog/github/get", blog.GetListFromGitHub)
+	server.GET("/api/blog/github/label/get", blog.GetLabelFromGitHub)
+	server.POST("/api/blog/github/detail", blog.GetDetailFromGitHub)
 
 	// blog aliyun
-	server.POST("/api/v1/blog/create", blog.Create, filter.MustLogin)
-	server.POST("/api/v1/blog/list", blog.GetList)
-	server.POST("/api/v1/blog/detail", blog.GetBlogDetail)
+	server.POST("/api/blog/create", blog.Create, filter.MustLogin)
+	server.POST("/api/blog/list", blog.GetList)
+	server.GET("/api/blog/list/all", blog.GetAllBlog)
+	server.POST("/api/blog/detail", blog.GetBlogDetail)
+
+	// badge
+	server.POST("/api/badge/create", badge.Create)
 }
