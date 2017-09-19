@@ -24,30 +24,49 @@
 
 /*
  * Revision History:
- *     Initial: 2017/08/15     Tang Xiaoji
+ *     Initial: 2017/09/19     Tang Xiaoji
  */
 
-package cockroach
+package badge
 
-const (
-	dbUrl      = "postgresql://txiaozhe:haku_db_txiaozhe@127.0.0.1:26257?sslmode=disable"
-	dbPoolSize = 20
+import (
+	"time"
+	"Haku/orm"
+	"github.com/jinzhu/gorm"
+	"Haku/orm/cockroach"
 )
 
-var (
-	Core = "core"
-	Content = "content"
-	Grade = "grade"
-)
+type BadgeReq struct {
+	Blogid     int64      `json:"blogid" validate:"required"`
+	Name       *string     `json:"name" validate:"required"`
+	Avatar     *string     `json:"avatar" validate:"required"`
+	Content    *string     `json:"content" validate:"required"`
+	Created    *time.Time  `json:"created"`
+}
 
-var (
-	DbConnPool *Pool
-)
+func (BadgeReq) TableName() string {
+	return "badge"
+}
 
-func InitCockroachPool() {
-	DbConnPool = NewPool(dbUrl, dbPoolSize)
+type badgeServiceProvider struct {}
 
-	if DbConnPool == nil {
-		panic("Cockroach DB connection error!")
+var BadgeService = &badgeServiceProvider{}
+
+func (c *badgeServiceProvider) Create(conn orm.Connection, ba BadgeReq) error {
+	now := time.Now()
+	badge := &BadgeReq{
+		Blogid: ba.Blogid,
+		Name: ba.Name,
+		Avatar: ba.Avatar,
+		Content: ba.Content,
+		Created: &now,
 	}
+
+	db := conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Grade)
+
+	if err := db.Create(badge).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

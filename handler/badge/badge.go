@@ -24,30 +24,45 @@
 
 /*
  * Revision History:
- *     Initial: 2017/08/15     Tang Xiaoji
+ *     Initial: 2017/09/19     Tang Xiaoji
  */
 
-package cockroach
+package badge
 
-const (
-	dbUrl      = "postgresql://txiaozhe:haku_db_txiaozhe@127.0.0.1:26257?sslmode=disable"
-	dbPoolSize = 20
+import (
+	"github.com/labstack/echo"
+	"Haku/service/badge"
+	"Haku/general/errorcode"
+	"Haku/general"
+	"Haku/orm/cockroach"
+	"net/http"
 )
 
-var (
-	Core = "core"
-	Content = "content"
-	Grade = "grade"
-)
+func Create(c echo.Context) error {
+	var (
+		err       error
+		ba        badge.BadgeReq
+	)
 
-var (
-	DbConnPool *Pool
-)
-
-func InitCockroachPool() {
-	DbConnPool = NewPool(dbUrl, dbPoolSize)
-
-	if DbConnPool == nil {
-		panic("Cockroach DB connection error!")
+	if err = c.Bind(&ba); err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
 	}
+
+	if err = c.Validate(ba); err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrInvalidParams, err.Error())
+	}
+
+	conn, err := cockroach.DbConnPool.GetConnection()
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrDBConnection, err.Error())
+	}
+	defer cockroach.DbConnPool.ReleaseConnection(conn)
+
+	err = badge.BadgeService.Create(conn, ba)
+	if err != nil {
+		return general.NewErrorWithMessage(errorcode.ErrDBOperationFailed, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, nil)
 }
+
