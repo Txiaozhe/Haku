@@ -169,9 +169,9 @@ func (b *blogServiceProvider) SetStar(conn orm.Connection, id int64) (Star, erro
 		return Star{}, err
 	}
 
-	err = db.Model(&blog).Find(&blog).Where("id=?", id).Error
+	err = db.Model(&blog).Where("id=?", id).Find(&blog).Error
 
-	s = Star{blog.Star + 1}
+	s = Star{blog.Star}
 
 	return s, err
 }
@@ -184,7 +184,7 @@ func (b *blogServiceProvider) GetStar(conn orm.Connection, id int64) (Star, erro
 	)
 
 	db := conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Content)
-	err = db.Model(&blog).Find(&blog).Where("id=?", id).Error
+	err = db.Model(&blog).Where("id=?", id).Find(&blog).Error
 
 	s = Star{blog.Star}
 
