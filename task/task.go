@@ -5,10 +5,11 @@ import (
 	"Haku/service/blog"
 	"github.com/jinzhu/gorm"
 	"Haku/orm/cockroach"
+	"Haku/orm"
 )
 
 type StarTask struct {
-	DB     *gorm.DB
+	conn     orm.Connection
 }
 
 var StarCount   int16
@@ -39,7 +40,8 @@ func (e StarTask) Run() {
 		cc          int16
 	)
 
-	e.DB.Table("blog").Select("star").Scan(&sc)
+	db := e.conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Content)
+	db.Table("blog").Select("star").Scan(&sc)
 
 	for _, k := range sc {
 		cc += k.Star
