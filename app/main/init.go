@@ -38,6 +38,7 @@ import (
 	"Haku/orm/cockroach"
 	"Haku/middleware/jwt"
 	"Haku/mongo"
+	"Haku/task"
 )
 
 var (
@@ -78,4 +79,6 @@ func init() {
 	readConfiguration()
 	cockroach.InitCockroachPool()
 	mongo.InitHaku(configuration.mongoURL)
+
+	task.StartJob()
 }

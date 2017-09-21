@@ -35,6 +35,7 @@ import (
 	"Haku/filter"
 	"Haku/middleware/jwt"
 	"Haku/handler/admin"
+	"Haku/handler/count"
 	"Haku/handler/blog"
 	"Haku/handler/badge"
 )
@@ -51,6 +52,9 @@ func InitRoute(server *echo.Echo, tokenKey string) {
 	// admin
 	server.POST("/api/admin/create", admin.Create)
 	server.POST("/api/admin/login", admin.Login)
+
+	// init
+	server.GET("/api/init/count", count.Counter)
 
 	// blog github
 	server.GET("/api/blog/github/get", blog.GetListFromGitHub)

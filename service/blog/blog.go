@@ -46,7 +46,7 @@ type BlogReq struct {
 	Abstract *string `json:"abstract" validate:"required"`
 	Tag      *string `json:"tag" validate:"required"`
 	Content  *string `json:"content" validate:"required"`
-	Star    int8     `json:"star"`
+	Star     int16     `json:"star"`
 }
 
 // roach 创建
@@ -56,7 +56,7 @@ type Blog struct {
 	Category  int8       `json:"category"`
 	Abstract  *string    `json:"abstract"`
 	Tag       *string    `json:"tag"`
-	Star      int8       `json:"star"`
+	Star      int16      `json:"star"`
 	Contentid int32      `json:"contentid"`
 	Created   *time.Time `json:"created"`
 }
@@ -69,7 +69,7 @@ type BlogContent struct {
 
 // Star
 type Star struct {
-	Star     int8    `json:"star"`
+	Star     int16    `json:"star"`
 }
 
 func (Blog) TableName() string {
