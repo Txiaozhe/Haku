@@ -9,3 +9,7 @@ CREATE TABLE IF NOT EXISTS admin (
   email       STRING(64)    UNIQUE,
   created     TIMESTAMP     DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS visit (
+  vis       INT         DEFAULT 0
+);

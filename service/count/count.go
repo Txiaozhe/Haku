@@ -13,25 +13,40 @@ type Info struct {
 	Stars   int16    `json:"stars"`
 }
 
+type Visit struct {
+	Vis     int16    `json:"vis"`
+}
+
 type countServiceProvider struct {}
 
 var CountService = &countServiceProvider{}
 
-func (c *countServiceProvider) Counter(conn orm.Connection) (Info, error) {
+func (c *countServiceProvider) Counter(conn orm.Connection) (*Info, error) {
 	var (
+		db          *gorm.DB
 		blogCount   int16
 		info        Info
+		v           Visit
 	)
 
-	db := conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Content)
-
+	// 统计 博客数和 star 数
+	db = conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Content)
 	err := db.Table("blog").Count(&blogCount).Error
+
+	// 统计访问数
+	db = conn.(*gorm.DB).Exec("SET DATABASE = " + cockroach.Core)
+	err = db.Table("visit").Model(&v).Update("vis", gorm.Expr("vis + ?", 1)).Limit(1).Error
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Table("visit").Model(&v).First(&v).Error
 
 	info = Info{
 		Blog: blogCount,
-		Visits: 0,
+		Visits: v.Vis,
 		Stars: task.StarCount,
 	}
 
-	return info, err
+	return &info, err
 }

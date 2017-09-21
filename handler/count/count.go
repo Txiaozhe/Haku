@@ -21,5 +21,5 @@ func Counter(c echo.Context) error {
 		return general.NewErrorWithMessage(errorcode.ErrInternalServer, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, info)
+	return c.JSON(http.StatusOK, &info)
 }
