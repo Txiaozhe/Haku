@@ -33,7 +33,6 @@ import (
 	"net/http"
 	"github.com/labstack/echo"
 	"github.com/prometheus/common/log"
-	"aliyun-oss-storage/general"
 )
 
 var (
@@ -44,7 +43,7 @@ var (
 func EchoRestfulErrHandler(err error, c echo.Context) {
 	log.Error(err)
 
-	if resp, ok := err.(*general.ErrorResp); ok {
+	if resp, ok := err.(*ErrorResp); ok {
 		code = resp.Code
 		msg = resp.Message
 	} else {
